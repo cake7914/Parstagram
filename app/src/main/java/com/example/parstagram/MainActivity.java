@@ -44,6 +44,7 @@ public class MainActivity extends AppCompatActivity {
     private ImageView ivPostImage;
     private Button btnSubmit;
     private Button btnLogout;
+    private Button btnFeed;
     private File photoFile;
     public String photoFileName = "photo.jpg";
 
@@ -60,6 +61,15 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 launchCamera();
+            }
+        });
+
+        btnFeed = findViewById(R.id.btnFeed);
+        btnFeed.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(MainActivity.this, FeedActivity.class);
+                startActivity(i);
             }
         });
 
@@ -200,27 +210,6 @@ public class MainActivity extends AppCompatActivity {
                     Log.i(TAG, "Post saved successfully!");
                     etDescription.setText("");
                     ivPostImage.setImageResource(0);
-                }
-            }
-        });
-    }
-
-    private void queryPosts() {
-        ParseQuery<Post> query = ParseQuery.getQuery(Post.class);
-        query.include(Post.KEY_USER);
-        query.findInBackground(new FindCallback<Post>() {
-            @Override
-            public void done(List<Post> posts, ParseException e) {
-                if (e != null)
-                {
-                    Log.e(TAG, "Issue with getting posts", e);
-                }
-                else
-                {
-                    for (Post post : posts)
-                    {
-                        Log.i(TAG, "Post: " + post.getDescription() + ", username: " + post.getUser().getUsername());
-                    }
                 }
             }
         });
