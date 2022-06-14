@@ -15,6 +15,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -46,37 +47,12 @@ public class MainActivity extends AppCompatActivity {
 
     public static final String TAG = "MainActivity";
     final FragmentManager fragmentManager = getSupportFragmentManager();
-    private Button btnLogout;
     private BottomNavigationView bottomNavigationView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        btnLogout = findViewById(R.id.btnLogout);
-        btnLogout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ParseUser.logOutInBackground(new LogOutCallback() {
-                    @Override
-                    public void done(ParseException e) {
-                        if(e != null)
-                        {
-                            Log.e(TAG, "Issue with logout", e);
-                            Toast.makeText(MainActivity.this, "Issue with logout!", Toast.LENGTH_SHORT).show();
-                        }
-                        else
-                        {
-                            //go to the login activity
-                            Intent i = new Intent(MainActivity.this, LoginActivity.class);
-                            startActivity(i);
-                            Toast.makeText(MainActivity.this, "Success in logging out!", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                });
-            }
-        });
 
         bottomNavigationView = findViewById(R.id.bottom_navigation);
         bottomNavigationView.setOnItemSelectedListener(new BottomNavigationView.OnItemSelectedListener() {
@@ -106,6 +82,40 @@ public class MainActivity extends AppCompatActivity {
         });
         // Set default selection
         bottomNavigationView.setSelectedItemId(R.id.action_home);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle presses on the action bar items
+        switch (item.getItemId()) {
+            case R.id.btnLogout:
+                ParseUser.logOutInBackground(new LogOutCallback() {
+                    @Override
+                    public void done(ParseException e) {
+                        if(e != null)
+                        {
+                            Log.e(TAG, "Issue with logout", e);
+                            Toast.makeText(MainActivity.this, "Issue with logout!", Toast.LENGTH_SHORT).show();
+                        }
+                        else
+                        {
+                            //go to the login activity
+                            Intent i = new Intent(MainActivity.this, LoginActivity.class);
+                            startActivity(i);
+                            Toast.makeText(MainActivity.this, "Success in logging out!", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
 }
