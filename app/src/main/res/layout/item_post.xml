@@ -7,20 +7,55 @@
     android:orientation="vertical">
 
     <TextView
-        android:id="@+id/tvUsername"
+        android:id="@+id/tvUsername2"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textAppearance="@style/TextAppearance.AppCompat.Large" />
+        android:layout_height="30dp"
+        android:layout_marginStart="40dp"
+        android:fontFamily="@font/neuton"
+        android:paddingTop="7dp"
+        android:paddingBottom="7dp"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        tools:text="cierra.ouellette" />
 
     <ImageView
         android:id="@+id/ivImage"
         android:layout_width="match_parent"
-        android:layout_height="300dp"
+        android:layout_height="wrap_content"
         android:scaleType="centerCrop"
         tools:srcCompat="@tools:sample/avatars" />
 
-    <TextView
-        android:id="@+id/tvDescription"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp">
+
+        <TextView
+            android:id="@+id/tvUsername"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_marginStart="1dp"
+            android:fontFamily="@font/neuton"
+            android:paddingTop="7dp"
+            android:paddingBottom="7dp"
+            android:textAppearance="@style/TextAppearance.AppCompat.Large"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            tools:text="cierra.ouellette" />
+
+        <TextView
+            android:id="@+id/tvDescription"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_marginStart="3dp"
+            android:layout_marginEnd="0dp"
+            android:layout_toEndOf="@+id/tvUsername"
+            android:paddingTop="7dp"
+            tools:text="is working on an Instagram app clone! super cool." />
+    </RelativeLayout>
+
 </LinearLayout>

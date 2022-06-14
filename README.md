@@ -9,7 +9,7 @@ Time spent: **4** hours spent in total
 The following **required** functionality is completed:
 
 - [X] User sees app icon in home screen.
-- [ ] User can sign up to create a new account using Parse authentication
+- [X] User can sign up to create a new account using Parse authentication
 - [X] User can log in to their account
 - [X] The current signed in user is persisted across app restarts
 - [X] User can log out of their account
@@ -20,12 +20,12 @@ The following **required** functionality is completed:
 
 The following **stretch** features are implemented:
 
-- [ ] Style the login page to look like the real Instagram login page.
+- [X] Style the login page to look like the real Instagram login page.
 - [ ] Style the feed to look like the real Instagram feed.
 - [ ] User can load more posts once they reach the bottom of the feed using endless scrolling.
-- [ ] User should switch between different tabs using fragments and a Bottom Navigation View.
-  - [ ] Feed Tab (to view all posts from all users)
-  - [ ] Capture Tab (to make a new post using the Camera and Photo Gallery)
+- [X] User should switch between different tabs using fragments and a Bottom Navigation View.
+  - [X] Feed Tab (to view all posts from all users)
+  - [X] Capture Tab (to make a new post using the Camera and Photo Gallery)
   - [ ] Profile Tab (to view only the current user's posts, in a grid)
 - [ ] Show the username and creation time for each post
 - User Profiles:
@@ -51,8 +51,6 @@ Please list two areas of the assignment you'd like to **discuss further with you
 Here's a walkthrough of implemented user stories:
 
 <img src='http://i.imgur.com/link/to/your/gif/file.gif' title='Video Walkthrough' width='' alt='Video Walkthrough' />
-
-GIF created with [Kap](https://getkap.co/).
 
 ## Credits
 

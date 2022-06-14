@@ -9,5 +9,4 @@
         android:id="@+id/rvPosts"
         android:layout_width="409dp"
         android:layout_height="729dp" />
-
 </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

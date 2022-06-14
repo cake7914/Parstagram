@@ -1,8 +1,11 @@
 package com.example.parstagram;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.FileProvider;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -12,12 +15,16 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.example.parstagram.fragments.ComposeFragment;
+import com.example.parstagram.fragments.PostsFragment;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.parse.FindCallback;
 import com.parse.LogOutCallback;
 import com.parse.Parse;
@@ -38,65 +45,14 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
 
     public static final String TAG = "MainActivity";
-    public static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 42;
-
-    private EditText etDescription;
-    private Button btnCaptureImage;
-    private ImageView ivPostImage;
-    private Button btnSubmit;
+    final FragmentManager fragmentManager = getSupportFragmentManager();
     private Button btnLogout;
-    private Button btnFeed;
-    private File photoFile;
-    public String photoFileName = "photo.jpg";
+    private BottomNavigationView bottomNavigationView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        etDescription = findViewById(R.id.etDescription);
-        ivPostImage = findViewById(R.id.ivPostImage);
-
-        btnCaptureImage = findViewById(R.id.btnCaptureImage);
-        btnCaptureImage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                launchCamera();
-            }
-        });
-
-        btnFeed = findViewById(R.id.btnFeed);
-        btnFeed.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View v) {
-                Intent i = new Intent(MainActivity.this, FeedActivity.class);
-                startActivity(i);
-            }
-        });
-
-
-        btnSubmit = findViewById(R.id.btnSubmit);
-        btnSubmit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // create a post
-                String description = etDescription.getText().toString();
-                if (description.isEmpty())
-                {
-                    Toast.makeText(MainActivity.this, "Description cannot be empty", Toast.LENGTH_SHORT).show();
-                }
-                else if(photoFile == null || ivPostImage.getDrawable() == null)
-                {
-                    Toast.makeText(MainActivity.this, "Photo cannot be empty", Toast.LENGTH_SHORT).show();
-                }
-                else
-                {
-                    ParseUser currentUser = ParseUser.getCurrentUser();
-                    savePost(description, currentUser, photoFile);
-                }
-            }
-        });
-
 
         btnLogout = findViewById(R.id.btnLogout);
         btnLogout.setOnClickListener(new View.OnClickListener() {
@@ -121,99 +77,35 @@ public class MainActivity extends AppCompatActivity {
                 });
             }
         });
-    }
 
-    private void launchCamera() {
-        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        photoFile = getPhotoFileUri(photoFileName);
-
-        Uri fileProvider = FileProvider.getUriForFile(MainActivity.this, "com.example.fileprovider", photoFile);
-        intent.putExtra(MediaStore.EXTRA_OUTPUT, fileProvider);
-
-        if(intent.resolveActivity(getPackageManager()) != null)
-        {
-            startActivityForResult(intent, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
-        }
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
-            if (resultCode == RESULT_OK) {
-                Bitmap takenImage = BitmapFactory.decodeFile(photoFile.getAbsolutePath());
-                ivPostImage.setImageBitmap(takenImage);
-                //not entirely sure if the below is necessary. commented for now.
-                /*Bitmap resizedBitmap = Bitmap.createScaledBitmap(takenImage, 150, 100, true);
-                ivPostImage.setImageBitmap(resizedBitmap);
-
-                // Configure byte output stream
-                ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-                // Compress the image further
-                resizedBitmap.compress(Bitmap.CompressFormat.JPEG, 40, bytes);
-                // Create a new file for the resized bitmap (`getPhotoFileUri` defined above)
-                File resizedFile = getPhotoFileUri(photoFileName + "_resized");
-                try {
-                    resizedFile.createNewFile();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                FileOutputStream fos = null;
-                try {
-                    fos = new FileOutputStream(resizedFile);
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
-                }
-                // Write the bytes of the bitmap to file
-                try {
-                    fos.write(bytes.toByteArray());
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                try {
-                    fos.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }*/
-
-            } else {
-                Toast.makeText(this, "Picture not taken!", Toast.LENGTH_SHORT).show();
-            }
-        }
-    }
-
-    public File getPhotoFileUri(String fileName) {
-        File mediaStorageDir = new File(getExternalFilesDir(Environment.DIRECTORY_PICTURES), TAG);
-
-        if(!mediaStorageDir.exists() && !mediaStorageDir.mkdirs()){
-            Log.d(TAG, "failed to create directory");
-        }
-
-        return new File(mediaStorageDir.getPath() + File.separator + fileName);
-    }
-
-
-    private void savePost(String description, ParseUser currentUser, File photoFile) {
-        Post post = new Post();
-        post.setDescription(description);
-        post.setImage(new ParseFile(photoFile));
-        post.setUser(currentUser);
-        post.saveInBackground(new SaveCallback() {
+        bottomNavigationView = findViewById(R.id.bottom_navigation);
+        bottomNavigationView.setOnItemSelectedListener(new BottomNavigationView.OnItemSelectedListener() {
             @Override
-            public void done(ParseException e) {
-                if (e != null)
-                {
-                    Log.e(TAG, "Error while saving post", e);
-                    Toast.makeText(MainActivity.this, "Error while saving post!", Toast.LENGTH_SHORT).show();
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                Fragment fragment;
+                switch (item.getItemId()) {
+                    case R.id.action_home: // go to feed
+                        // do something here
+                        fragment = new PostsFragment();
+                        break;
+                    case R.id.action_compose: // go to compose screen
+                        // do something here
+                        fragment = new ComposeFragment();
+                        break;
+                    case R.id.action_profile: // go to my profile
+                        // do something here
+                        fragment = new ComposeFragment();
+                        break;
+                    default:
+                        fragment = new ComposeFragment();
+                        break;
                 }
-                else
-                {
-                    Log.i(TAG, "Post saved successfully!");
-                    etDescription.setText("");
-                    ivPostImage.setImageResource(0);
-                    //post.setCreatedAt(Post.getCreatedAt());
-                }
+                fragmentManager.beginTransaction().replace(R.id.flContainer, fragment).commit();
+                return true;
             }
         });
+        // Set default selection
+        bottomNavigationView.setSelectedItemId(R.id.action_home);
     }
+
 }
