@@ -1,5 +1,8 @@
 package com.example.parstagram;
 
+import static com.example.parstagram.BuildConfig.CLIENT_KEY;
+import static com.example.parstagram.BuildConfig.PARSE_APPLICATION_ID;
+
 import android.app.Application;
 
 import com.parse.Parse;
@@ -14,8 +17,8 @@ public class ParseApplication extends Application {
         ParseObject.registerSubclass(Post.class);
 
         Parse.initialize(new Parse.Configuration.Builder(this)
-                .applicationId("PWf9T3ADAewS14G9iUaP9D60VngyTycp88mYjZYm")
-                .clientKey("ZWRDzaM7gw96ZY97rTYzdRqfafrvMA5at4gr4dIH")
+                .applicationId(PARSE_APPLICATION_ID)
+                .clientKey(CLIENT_KEY)
                 .server("https://parseapi.back4app.com")
                 .build()
         );

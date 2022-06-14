@@ -55,6 +55,7 @@ public class FeedActivity extends AppCompatActivity {
     private void queryPosts() {
         ParseQuery<Post> query = ParseQuery.getQuery(Post.class);
         query.include(Post.KEY_USER);
+        //query.include(Post.KEY_CREATED_AT);
         query.setLimit(20);
         query.addDescendingOrder("createdAt");
 
@@ -69,7 +70,7 @@ public class FeedActivity extends AppCompatActivity {
                 {
                     for (Post post : posts)
                     {
-                        Log.i(TAG, "Post: " + post.getDescription() + ", username: " + post.getUser().getUsername());
+                        Log.i(TAG, "Post: " + post.getDescription() + ", username: " + post.getUser().getUsername() + ", created at: " + post.getCreatedAt());
                     }
 
                     allPosts.addAll(posts);

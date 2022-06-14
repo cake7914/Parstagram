@@ -14,9 +14,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="1"
+        android:autofillHints="@string/username"
         android:ems="10"
-        android:hint="Username"
+        android:hint="@string/username"
         android:inputType="textPersonName"
+        android:minHeight="48dp"
         tools:layout_editor_absoluteX="21dp"
         tools:layout_editor_absoluteY="34dp" />
 
@@ -25,9 +27,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="1"
+        android:autofillHints="@string/password"
         android:ems="10"
-        android:hint="Password"
+        android:hint="@string/password"
         android:inputType="textPassword"
+        android:minHeight="48dp"
         tools:layout_editor_absoluteX="16dp"
         tools:layout_editor_absoluteY="110dp" />
 
@@ -35,7 +39,19 @@
         android:id="@+id/btnLogin"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Login"
+        android:backgroundTint="#2196F3"
+        android:text="@string/log_in"
+        android:textColor="#FFFFFF"
+        tools:ignore="TextContrastCheck,TextContrastCheck"
         tools:layout_editor_absoluteX="143dp"
         tools:layout_editor_absoluteY="189dp" />
+
+    <Button
+        android:id="@+id/button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:backgroundTint="#50BD0D"
+        android:text="@string/sign_up"
+        tools:ignore="TextContrastCheck" />
 </LinearLayout>

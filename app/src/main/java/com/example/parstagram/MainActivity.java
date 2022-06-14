@@ -32,6 +32,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Date;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
@@ -210,6 +211,7 @@ public class MainActivity extends AppCompatActivity {
                     Log.i(TAG, "Post saved successfully!");
                     etDescription.setText("");
                     ivPostImage.setImageResource(0);
+                    //post.setCreatedAt(Post.getCreatedAt());
                 }
             }
         });
