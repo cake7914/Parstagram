@@ -10,7 +10,11 @@ import com.parse.ParseFile;
 import com.parse.ParseObject;
 import com.parse.ParseUser;
 
+import org.json.JSONArray;
+
+import java.lang.reflect.Array;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 
@@ -22,8 +26,8 @@ public class Post extends ParseObject {
     public static final String KEY_USER = "user";
     public static final String KEY_CREATED_AT = "createdAt";
     public static final String KEY_PROFILE_PIC = "profilePhoto";
-    public static final String KEY_LIKE_COUNT = "likeCount";
-    public static final String KEY_LIKED = "liked";
+    public static final String KEY_USERS_LIKED = "usersLiked";
+    public static final String KEY_COMMENT_COUNT = "commentCount";
 
     public String getDescription() {
         return getString(KEY_DESCRIPTION);
@@ -49,13 +53,21 @@ public class Post extends ParseObject {
         put(KEY_USER, user);
     }
 
-    public int getLikeCount() { return getInt(KEY_LIKE_COUNT);}
+    public JSONArray getUsersLiked() { return getJSONArray(KEY_USERS_LIKED); }
 
-    public void updateLikeCount(int like) { put(KEY_LIKE_COUNT, getInt(KEY_LIKE_COUNT) + like);}
+    public void setUsersLiked(JSONArray users) { put(KEY_USERS_LIKED, users); }
 
-    public boolean getLiked() { return getBoolean(KEY_LIKED);}
+    public void likePost(ParseUser user) {
+        add(KEY_USERS_LIKED, user.getObjectId());
+    }
 
-    public void setLiked(boolean liked) { put(KEY_LIKED, liked);}
+    public void unlikePost(int pos) {
+        JSONArray users = getUsersLiked();
+        users.remove(pos);
+        setUsersLiked(users);
+    }
+
+    public int getCommentCount() { return getInt(KEY_COMMENT_COUNT); }
 
     public static String calculateTimeStamp(Date createdAt) {
 

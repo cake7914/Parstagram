@@ -19,8 +19,12 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.parse.ParseFile;
+import com.parse.ParseUser;
 
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.parceler.Parcels;
+import org.w3c.dom.Text;
 
 import java.util.List;
 
@@ -43,7 +47,11 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder> 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Post post = posts.get(position);
-        holder.bind(post);
+        try {
+            holder.bind(post);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -72,7 +80,9 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder> 
         private ImageView ivProfilePic;
         private TextView tvLikeCount;
         private ImageButton btnLike;
+        private ImageButton btnComment;
         private TextView tvCreationTime;
+        private TextView tvCommentCount;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -83,21 +93,27 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder> 
             ivProfilePic = itemView.findViewById(R.id.ivProfilePic);
             tvLikeCount = itemView.findViewById(R.id.tvLikeCount);
             btnLike = itemView.findViewById(R.id.btnLike);
+            btnComment = itemView.findViewById(R.id.btnComment);
             tvCreationTime = itemView.findViewById(R.id.tvCreationTime);
+            tvCommentCount = itemView.findViewById(R.id.tvCommentCount);
         }
 
-        public void bind(Post post) {
+        public void bind(Post post) throws JSONException {
             tvDescription.setText(post.getDescription());
             tvUsername.setText(post.getUser().getUsername());
             tvUsername2.setText(post.getUser().getUsername());
             tvCreationTime.setText(Post.getRelativeTimeAgo(post.getCreatedAt().toString()));
-            tvLikeCount.setText(post.getLikeCount() + " Likes");
+            if(post.getUsersLiked() != null) {
+                tvLikeCount.setText((post.getUsersLiked()).length() + " Likes");
+            }
+            tvCommentCount.setText("View all "+ post.getCommentCount() + " comments");
             ParseFile image = post.getImage();
             if(image != null) {
                 Glide.with(context).load(image.getUrl()).into(ivImage);
             } else {
                 ivImage.setImageBitmap(null);
             }
+
             ParseFile profilePic = post.getUser().getParseFile("profilePhoto");
             if(profilePic != null && ivProfilePic != null)
             {
@@ -108,22 +124,45 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder> 
                 ivProfilePic.setImageBitmap(null);
             }
 
+            int pos = checkUserLikedPost(ParseUser.getCurrentUser().getObjectId(), post.getUsersLiked());
+            if(pos == -1) //user has not liked post
+            {
+                btnLike.setColorFilter(Color.BLACK);
+            } else {
+                btnLike.setColorFilter(Color.RED);
+            }
+
             btnLike.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if(post.getLiked()) //unlike the post, decrease likes count
-                    {
-                        post.setLiked(false);
-                        post.updateLikeCount(-1);
-                        btnLike.setColorFilter(Color.BLACK);
-                    } else { //like the post, increase the likes count
-                        post.setLiked(true);
-                        post.updateLikeCount(1);
-                        btnLike.setColorFilter(Color.RED);
+                    try {
+                        int pos = checkUserLikedPost(ParseUser.getCurrentUser().getObjectId(), post.getUsersLiked());
+                        if(pos != -1) //if user has already liked the post, unlike the post
+                        {
+                            post.unlikePost(pos);
+                            btnLike.setColorFilter(Color.BLACK);
+                        } else { //if user has not liked the post, then like the post
+                            post.likePost(ParseUser.getCurrentUser());
+                            btnLike.setColorFilter(Color.RED);
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
-                    tvLikeCount.setText(post.getLikeCount() + " Likes");
+                    tvLikeCount.setText((post.getUsersLiked()).length() + " Likes");
+                    post.saveInBackground();
                 }
             });
+
+
+            btnComment.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent i = new Intent(context, CommentsActivity.class);
+                    i.putExtra(Post.class.getSimpleName(), Parcels.wrap(post));
+                    context.startActivity(i);
+                }
+            });
+
 
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -135,5 +174,17 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder> 
             });
         }
     }
+
+    public int checkUserLikedPost(String userID, JSONArray usersLiked) throws JSONException {
+        if(usersLiked != null) {
+            for (int i = 0; i < usersLiked.length(); i++) {
+                if (usersLiked.getString(i).equals(userID)) {
+                    return i;
+                }
+            }
+        }
+        return -1;
+    }
+
 }
 

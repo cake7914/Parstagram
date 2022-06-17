@@ -1,5 +1,7 @@
 package com.example.parstagram.fragments;
 
+import static android.app.Activity.RESULT_OK;
+
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -36,7 +38,6 @@ public class ComposeFragment extends Fragment {
 
     public static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 42;
     public static final String TAG = "ComposeFragment";
-    private static final int RESULT_OK = 42;
 
     private EditText etDescription;
     private Button btnCaptureImage;
@@ -100,7 +101,7 @@ public class ComposeFragment extends Fragment {
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         photoFile = getPhotoFileUri(photoFileName);
 
-        Uri fileProvider = FileProvider.getUriForFile(getContext(), "com.example.fileprovider", photoFile);
+        Uri fileProvider = FileProvider.getUriForFile(getContext(), "com.cierra.fileprovider", photoFile);
         intent.putExtra(MediaStore.EXTRA_OUTPUT, fileProvider);
 
         if(intent.resolveActivity(getContext().getPackageManager()) != null)
@@ -116,40 +117,8 @@ public class ComposeFragment extends Fragment {
             if (resultCode == RESULT_OK) {
                 Bitmap takenImage = BitmapFactory.decodeFile(photoFile.getAbsolutePath());
                 ivPostImage.setImageBitmap(takenImage);
-                //not entirely sure if the below is necessary. commented for now.
-                /*Bitmap resizedBitmap = Bitmap.createScaledBitmap(takenImage, 150, 100, true);
-                ivPostImage.setImageBitmap(resizedBitmap);
-
-                // Configure byte output stream
-                ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-                // Compress the image further
-                resizedBitmap.compress(Bitmap.CompressFormat.JPEG, 40, bytes);
-                // Create a new file for the resized bitmap (`getPhotoFileUri` defined above)
-                File resizedFile = getPhotoFileUri(photoFileName + "_resized");
-                try {
-                    resizedFile.createNewFile();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                FileOutputStream fos = null;
-                try {
-                    fos = new FileOutputStream(resizedFile);
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
-                }
-                // Write the bytes of the bitmap to file
-                try {
-                    fos.write(bytes.toByteArray());
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                try {
-                    fos.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }*/
-
             } else {
+                Log.e(TAG, String.valueOf(resultCode));
                 Toast.makeText(getContext(), "Picture not taken!", Toast.LENGTH_SHORT).show();
             }
         }
@@ -184,7 +153,6 @@ public class ComposeFragment extends Fragment {
                     Log.i(TAG, "Post saved successfully!");
                     etDescription.setText("");
                     ivPostImage.setImageResource(0);
-                    //post.setCreatedAt(Post.getCreatedAt());
                 }
             }
         });

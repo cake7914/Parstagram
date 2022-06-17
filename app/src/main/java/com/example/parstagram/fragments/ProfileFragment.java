@@ -1,5 +1,6 @@
 package com.example.parstagram.fragments;
 
+import android.media.Image;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -9,16 +10,21 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import android.provider.ContactsContract;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.example.parstagram.Post;
 import com.example.parstagram.PostsAdapter;
 import com.example.parstagram.R;
 import com.parse.FindCallback;
 import com.parse.ParseException;
+import com.parse.ParseFile;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
@@ -32,6 +38,8 @@ public class ProfileFragment extends Fragment {
     private List<Post> allPosts;
     RecyclerView rvPosts;
     private SwipeRefreshLayout swipeContainer;
+    private ImageView ivProfilePicture;
+    private TextView tvUsername;
 
     public ProfileFragment() {
         // Required empty public constructor
@@ -60,6 +68,16 @@ public class ProfileFragment extends Fragment {
             }
         });
 
+        ivProfilePicture = view.findViewById(R.id.ivProfileAvatar);
+        ParseFile image = ParseUser.getCurrentUser().getParseFile("profilePhoto");
+        if(image != null) {
+            Glide.with(ProfileFragment.this).load(image.getUrl()).circleCrop().into(ivProfilePicture);
+        } else {
+            ivProfilePicture.setImageBitmap(null);
+        }
+        tvUsername = view.findViewById(R.id.tvUsername3);
+        tvUsername.setText(ParseUser.getCurrentUser().getUsername());
+
         rvPosts = view.findViewById(R.id.rvPosts2);
 
         allPosts = new ArrayList<>();
@@ -67,6 +85,7 @@ public class ProfileFragment extends Fragment {
 
         rvPosts.setAdapter(adapter);
         rvPosts.setLayoutManager(new GridLayoutManager(getContext(), 3));
+
         queryPosts();
     }
 
