@@ -50,7 +50,7 @@ Please list two areas of the assignment you'd like to **discuss further with you
 
 Here's a walkthrough of implemented user stories:
 
-![](ezgif.com-gif-maker (1).gif)
+![](parstagram.gif)
 
 ## Credits
 
