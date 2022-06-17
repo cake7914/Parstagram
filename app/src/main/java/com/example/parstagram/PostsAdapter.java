@@ -72,6 +72,7 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder> 
         private ImageView ivProfilePic;
         private TextView tvLikeCount;
         private ImageButton btnLike;
+        private TextView tvCreationTime;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -82,12 +83,14 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder> 
             ivProfilePic = itemView.findViewById(R.id.ivProfilePic);
             tvLikeCount = itemView.findViewById(R.id.tvLikeCount);
             btnLike = itemView.findViewById(R.id.btnLike);
+            tvCreationTime = itemView.findViewById(R.id.tvCreationTime);
         }
 
         public void bind(Post post) {
             tvDescription.setText(post.getDescription());
             tvUsername.setText(post.getUser().getUsername());
             tvUsername2.setText(post.getUser().getUsername());
+            tvCreationTime.setText(Post.getRelativeTimeAgo(post.getCreatedAt().toString()));
             tvLikeCount.setText(post.getLikeCount() + " Likes");
             ParseFile image = post.getImage();
             if(image != null) {
