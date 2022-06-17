@@ -16,6 +16,10 @@ public class Post extends ParseObject {
     public static final String KEY_DESCRIPTION = "description";
     public static final String KEY_IMAGE = "image";
     public static final String KEY_USER = "user";
+    public static final String KEY_CREATED_AT = "createdAt";
+    public static final String KEY_PROFILE_PIC = "profilePhoto";
+    public static final String KEY_LIKE_COUNT = "likeCount";
+    public static final String KEY_LIKED = "liked";
 
     public String getDescription() {
         return getString(KEY_DESCRIPTION);
@@ -40,6 +44,14 @@ public class Post extends ParseObject {
     public void setUser(ParseUser user) {
         put(KEY_USER, user);
     }
+
+    public int getLikeCount() { return getInt(KEY_LIKE_COUNT);}
+
+    public void updateLikeCount(int like) { put(KEY_LIKE_COUNT, getInt(KEY_LIKE_COUNT) + like);}
+
+    public boolean getLiked() { return getBoolean(KEY_LIKED);}
+
+    public void setLiked(boolean liked) { put(KEY_LIKED, liked);}
 
     public static String calculateTimeStamp(Date createdAt) {
 

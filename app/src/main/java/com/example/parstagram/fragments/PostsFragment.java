@@ -26,10 +26,10 @@ import java.util.List;
 
 public class PostsFragment extends Fragment {
 
-    private final String TAG = "FeedActivity";
-    protected PostsAdapter adapter;
-    protected List<Post> allPosts;
-    RecyclerView rvPosts;
+    private final String TAG = "PostsFragment";
+    private PostsAdapter adapter;
+    private List<Post> allPosts;
+    private RecyclerView rvPosts;
     private SwipeRefreshLayout swipeContainer;
 
     public PostsFragment() {

@@ -25,6 +25,7 @@ import android.widget.Toast;
 
 import com.example.parstagram.fragments.ComposeFragment;
 import com.example.parstagram.fragments.PostsFragment;
+import com.example.parstagram.fragments.ProfileFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.parse.FindCallback;
 import com.parse.LogOutCallback;
@@ -59,21 +60,17 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 Fragment fragment;
-                switch (item.getItemId()) {
-                    case R.id.action_home: // go to feed
-                        // do something here
-                        fragment = new PostsFragment();
-                        break;
+                switch (item.getItemId()) {// do something here
                     case R.id.action_compose: // go to compose screen
                         // do something here
                         fragment = new ComposeFragment();
                         break;
                     case R.id.action_profile: // go to my profile
                         // do something here
-                        fragment = new ComposeFragment();
+                        fragment = new ProfileFragment();
                         break;
-                    default:
-                        fragment = new ComposeFragment();
+                    default: // go to feed
+                        fragment = new PostsFragment();
                         break;
                 }
                 fragmentManager.beginTransaction().replace(R.id.flContainer, fragment).commit();
