@@ -21,8 +21,12 @@
     <string name="home">Home</string>
     <string name="post">Post</string>
     <string name="profile">Profile</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="logout">Logout</string>
-    <string name="add_a_comment">Add a comment...</string>
+    <string name="add_a_comment">Add a comment…</string>
+    <string name="likes">%d Likes</string>
+    <string name="view_all">View all %d comments</string>
+    <string name="profile_picture">Profile Picture</string>
+    <string name="like_button">Like Button</string>
+    <string name="comment_button">Comment Button</string>
+    <string name="share_button">Share Button</string>
 </resources>

@@ -30,7 +30,8 @@
             android:id="@+id/ivProfilePic"
             android:layout_width="50dp"
             android:layout_height="50dp"
-            tools:srcCompat="@tools:sample/avatars" />
+            tools:srcCompat="@tools:sample/avatars"
+            android:contentDescription="@string/profile_picture" />
     </RelativeLayout>
 
     <ImageView
@@ -38,7 +39,8 @@
         android:layout_width="match_parent"
         android:layout_height="300dp"
         android:scaleType="centerCrop"
-        tools:srcCompat="@tools:sample/avatars" />
+        tools:srcCompat="@tools:sample/avatars"
+        android:contentDescription="@string/post" />
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -50,7 +52,8 @@
             android:layout_height="30dp"
             android:backgroundTint="#FFFFFF"
             app:tint="#000000"
-            app:srcCompat="@drawable/ic_favorite_white_24dp" />
+            app:srcCompat="@drawable/ic_favorite_white_24dp"
+            android:contentDescription="@string/like_button" />
 
         <ImageButton
             android:id="@+id/btnComment"
@@ -60,7 +63,8 @@
             android:layout_toEndOf="@+id/btnLike"
             android:backgroundTint="#FFFFFF"
             app:tint="#000000"
-            app:srcCompat="@drawable/ufi_comment" />
+            app:srcCompat="@drawable/ufi_comment"
+            android:contentDescription="@string/comment_button" />
 
         <ImageButton
             android:id="@+id/btnShare"
@@ -70,7 +74,8 @@
             android:layout_toEndOf="@+id/btnComment"
             android:backgroundTint="#FFFFFF"
             app:tint="#000000"
-            app:srcCompat="@android:drawable/ic_menu_send" />
+            app:srcCompat="@android:drawable/ic_menu_send"
+            android:contentDescription="@string/share_button" />
 
     </RelativeLayout>
 

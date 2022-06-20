@@ -3,8 +3,6 @@ package com.example.parstagram;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
-import android.os.Parcel;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,17 +12,14 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.parse.ParseFile;
 import com.parse.ParseUser;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.parceler.Parcels;
-import org.w3c.dom.Text;
 
 import java.util.List;
 
@@ -61,14 +56,15 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder> 
 
     // Clean all elements of the recycler
     public void clear() {
+        int size = posts.size();
         posts.clear();
-        notifyDataSetChanged();
+        notifyItemRangeRemoved(0, size);
     }
 
     // Add a list of items -- change to type used
     public void addAll(List<Post> list) {
         posts.addAll(list);
-        notifyDataSetChanged();
+        notifyItemRangeInserted(posts.size()-list.size(), list.size());
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {
@@ -103,10 +99,11 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder> 
             tvUsername.setText(post.getUser().getUsername());
             tvUsername2.setText(post.getUser().getUsername());
             tvCreationTime.setText(Post.getRelativeTimeAgo(post.getCreatedAt().toString()));
+
             if(post.getUsersLiked() != null) {
-                tvLikeCount.setText((post.getUsersLiked()).length() + " Likes");
+                tvLikeCount.setText(String.format(context.getString(R.string.likes), (post.getUsersLiked()).length()));
             }
-            tvCommentCount.setText("View all "+ post.getCommentCount() + " comments");
+            tvCommentCount.setText(String.format(context.getString(R.string.view_all), post.getCommentCount()));
             ParseFile image = post.getImage();
             if(image != null) {
                 Glide.with(context).load(image.getUrl()).into(ivImage);
@@ -132,45 +129,34 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder> 
                 btnLike.setColorFilter(Color.RED);
             }
 
-            btnLike.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    try {
-                        int pos = checkUserLikedPost(ParseUser.getCurrentUser().getObjectId(), post.getUsersLiked());
-                        if(pos != -1) //if user has already liked the post, unlike the post
-                        {
-                            post.unlikePost(pos);
-                            btnLike.setColorFilter(Color.BLACK);
-                        } else { //if user has not liked the post, then like the post
-                            post.likePost(ParseUser.getCurrentUser());
-                            btnLike.setColorFilter(Color.RED);
-                        }
-                    } catch (JSONException e) {
-                        e.printStackTrace();
+            btnLike.setOnClickListener(v -> {
+                try {
+                    int pos1 = checkUserLikedPost(ParseUser.getCurrentUser().getObjectId(), post.getUsersLiked());
+                    if(pos1 != -1) //if user has already liked the post, unlike the post
+                    {
+                        post.unlikePost(pos1);
+                        btnLike.setColorFilter(Color.BLACK);
+                    } else { //if user has not liked the post, then like the post
+                        post.likePost(ParseUser.getCurrentUser());
+                        btnLike.setColorFilter(Color.RED);
                     }
-                    tvLikeCount.setText((post.getUsersLiked()).length() + " Likes");
-                    post.saveInBackground();
+                } catch (JSONException e) {
+                    e.printStackTrace();
                 }
+                post.saveInBackground();
+            });
+
+            btnComment.setOnClickListener(v -> {
+                Intent i = new Intent(context, CommentsActivity.class);
+                i.putExtra(Post.class.getSimpleName(), Parcels.wrap(post));
+                context.startActivity(i);
             });
 
 
-            btnComment.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent i = new Intent(context, CommentsActivity.class);
-                    i.putExtra(Post.class.getSimpleName(), Parcels.wrap(post));
-                    context.startActivity(i);
-                }
-            });
-
-
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent i = new Intent(context, PostDetailsActivity.class);
-                    i.putExtra(Post.class.getSimpleName(), Parcels.wrap(post));
-                    context.startActivity(i);
-                }
+            itemView.setOnClickListener(v -> {
+                Intent i = new Intent(context, PostDetailsActivity.class);
+                i.putExtra(Post.class.getSimpleName(), Parcels.wrap(post));
+                context.startActivity(i);
             });
         }
     }

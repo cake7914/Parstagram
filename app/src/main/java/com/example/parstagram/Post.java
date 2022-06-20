@@ -3,20 +3,17 @@ package com.example.parstagram;
 import android.text.format.DateUtils;
 import android.util.Log;
 
-import com.parse.Parse;
 import com.parse.ParseClassName;
-import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseObject;
 import com.parse.ParseUser;
 
 import org.json.JSONArray;
 
-import java.lang.reflect.Array;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
+import java.util.Objects;
 
 @ParseClassName("Post")
 public class Post extends ParseObject {
@@ -112,7 +109,7 @@ public class Post extends ParseObject {
 
         String relativeDate = "";
         try {
-            long dateMillis = sf.parse(date).getTime();
+            long dateMillis = Objects.requireNonNull(sf.parse(date)).getTime();
             relativeDate = DateUtils.getRelativeTimeSpanString(dateMillis,
                     System.currentTimeMillis(), DateUtils.SECOND_IN_MILLIS).toString();
         } catch (java.text.ParseException e) {

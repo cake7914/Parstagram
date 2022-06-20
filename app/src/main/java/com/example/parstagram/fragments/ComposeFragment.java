@@ -24,13 +24,10 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.example.parstagram.MainActivity;
 import com.example.parstagram.Post;
 import com.example.parstagram.R;
-import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseUser;
-import com.parse.SaveCallback;
 
 import java.io.File;
 
@@ -66,33 +63,25 @@ public class ComposeFragment extends Fragment {
         ivPostImage = view.findViewById(R.id.ivPostImage);
 
         btnCaptureImage = view.findViewById(R.id.btnCaptureImage);
-        btnCaptureImage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                launchCamera();
-            }
-        });
+        btnCaptureImage.setOnClickListener(v -> launchCamera());
 
 
         btnSubmit = view.findViewById(R.id.btnSubmit);
-        btnSubmit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // create a post
-                String description = etDescription.getText().toString();
-                if (description.isEmpty())
-                {
-                    Toast.makeText(getContext(), "Description cannot be empty", Toast.LENGTH_SHORT).show();
-                }
-                else if(photoFile == null || ivPostImage.getDrawable() == null)
-                {
-                    Toast.makeText(getContext(), "Photo cannot be empty", Toast.LENGTH_SHORT).show();
-                }
-                else
-                {
-                    ParseUser currentUser = ParseUser.getCurrentUser();
-                    savePost(description, currentUser, photoFile);
-                }
+        btnSubmit.setOnClickListener(v -> {
+            // create a post
+            String description = etDescription.getText().toString();
+            if (description.isEmpty())
+            {
+                Toast.makeText(getContext(), "Description cannot be empty", Toast.LENGTH_SHORT).show();
+            }
+            else if(photoFile == null || ivPostImage.getDrawable() == null)
+            {
+                Toast.makeText(getContext(), "Photo cannot be empty", Toast.LENGTH_SHORT).show();
+            }
+            else
+            {
+                ParseUser currentUser = ParseUser.getCurrentUser();
+                savePost(description, currentUser, photoFile);
             }
         });
     }
@@ -140,20 +129,17 @@ public class ComposeFragment extends Fragment {
         post.setDescription(description);
         post.setImage(new ParseFile(photoFile));
         post.setUser(currentUser);
-        post.saveInBackground(new SaveCallback() {
-            @Override
-            public void done(ParseException e) {
-                if (e != null)
-                {
-                    Log.e(TAG, "Error while saving post", e);
-                    Toast.makeText(getContext(), "Error while saving post!", Toast.LENGTH_SHORT).show();
-                }
-                else
-                {
-                    Log.i(TAG, "Post saved successfully!");
-                    etDescription.setText("");
-                    ivPostImage.setImageResource(0);
-                }
+        post.saveInBackground(e -> {
+            if (e != null)
+            {
+                Log.e(TAG, "Error while saving post", e);
+                Toast.makeText(getContext(), "Error while saving post!", Toast.LENGTH_SHORT).show();
+            }
+            else
+            {
+                Log.i(TAG, "Post saved successfully!");
+                etDescription.setText("");
+                ivPostImage.setImageResource(0);
             }
         });
     }

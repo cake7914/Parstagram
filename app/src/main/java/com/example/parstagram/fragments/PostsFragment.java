@@ -17,8 +17,6 @@ import android.view.ViewGroup;
 import com.example.parstagram.Post;
 import com.example.parstagram.PostsAdapter;
 import com.example.parstagram.R;
-import com.parse.FindCallback;
-import com.parse.ParseException;
 import com.parse.ParseQuery;
 
 import java.util.ArrayList;
@@ -47,16 +45,13 @@ public class PostsFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         swipeContainer = view.findViewById(R.id.swipeContainer);
-        swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                // Your code to refresh the list here.
-                // Make sure you call swipeContainer.setRefreshing(false)
-                // once the network request has completed successfully.
-                adapter.clear();
-                queryPosts();
-                swipeContainer.setRefreshing(false);
-            }
+        swipeContainer.setOnRefreshListener(() -> {
+            // Your code to refresh the list here.
+            // Make sure you call swipeContainer.setRefreshing(false)
+            // once the network request has completed successfully.
+            adapter.clear();
+            queryPosts();
+            swipeContainer.setRefreshing(false);
         });
 
         rvPosts = view.findViewById(R.id.rvPosts);
@@ -73,25 +68,20 @@ public class PostsFragment extends Fragment {
         ParseQuery<Post> query = ParseQuery.getQuery(Post.class);
         query.include(Post.KEY_USER);
         query.setLimit(20);
-        query.addDescendingOrder("createdAt");
+        query.addDescendingOrder(Post.KEY_CREATED_AT);
 
-        query.findInBackground(new FindCallback<Post>() {
-            @Override
-            public void done(List<Post> posts, ParseException e) {
-                if (e != null)
+        query.findInBackground((posts, e) -> {
+            if (e != null)
+            {
+                Log.e(TAG, "Issue with getting posts", e);
+            }
+            else
+            {
+                for (Post post : posts)
                 {
-                    Log.e(TAG, "Issue with getting posts", e);
+                    Log.i(TAG, "Post: " + post.getDescription() + ", username: " + post.getUser().getUsername() + ", created at: " + post.getCreatedAt());
                 }
-                else
-                {
-                    for (Post post : posts)
-                    {
-                        Log.i(TAG, "Post: " + post.getDescription() + ", username: " + post.getUser().getUsername() + ", created at: " + post.getCreatedAt());
-                    }
-
-                    allPosts.addAll(posts);
-                    adapter.notifyDataSetChanged(); // modify to make more accurate
-                }
+                adapter.addAll(posts); // modify to make more accurate
             }
         });
     }
