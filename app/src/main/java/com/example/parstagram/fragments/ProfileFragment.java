@@ -23,6 +23,8 @@ import com.parse.ParseFile;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
+import org.parceler.Parcels;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,6 +37,7 @@ public class ProfileFragment extends Fragment {
     private SwipeRefreshLayout swipeContainer;
     private ImageView ivProfilePicture;
     private TextView tvUsername;
+    ParseUser user;
 
     public ProfileFragment() {
         // Required empty public constructor
@@ -60,15 +63,26 @@ public class ProfileFragment extends Fragment {
             swipeContainer.setRefreshing(false);
         });
 
+        Bundle bundle = getArguments();
+        if(bundle != null)
+        {
+            Post post = bundle.getParcelable(Post.class.getSimpleName());
+            user = post.getUser();
+        }
+        else
+        {
+            user = ParseUser.getCurrentUser();
+        }
+
         ivProfilePicture = view.findViewById(R.id.ivProfileAvatar);
-        ParseFile image = ParseUser.getCurrentUser().getParseFile("profilePhoto");
+        ParseFile image = user.getParseFile("profilePhoto");
         if(image != null) {
             Glide.with(ProfileFragment.this).load(image.getUrl()).circleCrop().into(ivProfilePicture);
         } else {
             ivProfilePicture.setImageBitmap(null);
         }
         tvUsername = view.findViewById(R.id.tvUsername3);
-        tvUsername.setText(ParseUser.getCurrentUser().getUsername());
+        tvUsername.setText(user.getUsername());
 
         rvPosts = view.findViewById(R.id.rvPosts2);
 
@@ -84,9 +98,9 @@ public class ProfileFragment extends Fragment {
     protected void queryPosts() {
         ParseQuery<Post> query = ParseQuery.getQuery(Post.class);
         query.include(Post.KEY_USER);
-        query.whereEqualTo(Post.KEY_USER, ParseUser.getCurrentUser());
+        query.whereEqualTo(Post.KEY_USER, user);
         query.setLimit(20);
-        query.addDescendingOrder("createdAt");
+        query.addDescendingOrder(Post.KEY_CREATED_AT);
 
         query.findInBackground((posts, e) -> {
             if (e != null)

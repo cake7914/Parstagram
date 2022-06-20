@@ -3,6 +3,8 @@ package com.example.parstagram;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,9 +13,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.example.parstagram.fragments.ProfileFragment;
 import com.parse.ParseFile;
 import com.parse.ParseUser;
 
@@ -120,6 +125,18 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder> 
             {
                 ivProfilePic.setImageBitmap(null);
             }
+
+            ivProfilePic.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Fragment fragment = new ProfileFragment();
+                    Bundle bundle = new Bundle();
+                    bundle.putParcelable(Post.class.getSimpleName(), post);
+                    fragment.setArguments(bundle);
+                    MainActivity mainActivity = (MainActivity) context;
+                    mainActivity.switchContent(fragment);
+                }
+            });
 
             int pos = checkUserLikedPost(ParseUser.getCurrentUser().getObjectId(), post.getUsersLiked());
             if(pos == -1) //user has not liked post
